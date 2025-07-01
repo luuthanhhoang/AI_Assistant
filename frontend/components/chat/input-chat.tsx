@@ -22,6 +22,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { useAppDispatch } from "@/store/hooks";
+import { addMessage } from "@/store/features/messagesSlice";
 
 const fileActions = [
   {
@@ -59,6 +61,7 @@ const toolActions = [
 export default function InputChat() {
   const router = useRouter();
   const [content, setContent] = useState("");
+  const dispatch = useAppDispatch();
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -70,12 +73,19 @@ export default function InputChat() {
   const handleSubmit = useCallback(() => {
     const pathName = window.location.pathname;
     const id = uuidv4();
+    dispatch(
+      addMessage({
+        type: "user",
+        content,
+        id,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      })
+    );
     if (pathName === "/chat") {
       router.push(`/chat/${id}`);
-    } else {
-      console.log(content);
     }
-  }, [content, router]);
+  }, [content, dispatch, router]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
