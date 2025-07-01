@@ -1,9 +1,17 @@
 interface Message {
   type: "user" | "assistant";
   content: string;
-  id: string;
+  messageId: string;
+  threadId: string;
   createdAt: string;
   updatedAt: string;
 }
 
-export type { Message };
+interface Thread {
+  threadId: string;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type { Message, Thread };

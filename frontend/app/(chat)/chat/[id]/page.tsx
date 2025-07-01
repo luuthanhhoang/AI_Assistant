@@ -18,7 +18,7 @@ export default function ChatPage() {
         <div className="flex flex-1 flex-col w-full gap-12">
           {messages.map((message) => (
             <MessageBox
-              key={message.id}
+              key={message.messageId}
               message={message.content}
               type={message.type}
             />

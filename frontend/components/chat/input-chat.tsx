@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import GoogleDriverIcon from "@/public/images/google_driver.png";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useAppDispatch } from "@/store/hooks";
@@ -60,6 +60,7 @@ const toolActions = [
 
 export default function InputChat() {
   const router = useRouter();
+  const params = useParams();
   const [content, setContent] = useState("");
   const dispatch = useAppDispatch();
 
@@ -70,22 +71,31 @@ export default function InputChat() {
     []
   );
 
+  const resetContent = useCallback(() => {
+    setContent("");
+  }, []);
+
   const handleSubmit = useCallback(() => {
+    if (!content) return;
+
     const pathName = window.location.pathname;
-    const id = uuidv4();
+    const threadId = (params.id as string) || uuidv4();
+    const messageId = uuidv4();
     dispatch(
       addMessage({
         type: "user",
         content,
-        id,
+        messageId,
+        threadId,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       })
     );
-    if (pathName === "/chat") {
-      router.push(`/chat/${id}`);
+    resetContent();
+    if (pathName !== `/chat/${threadId}`) {
+      router.push(`/chat/${threadId}`);
     }
-  }, [content, dispatch, router]);
+  }, [content, dispatch, params.id, resetContent, router]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

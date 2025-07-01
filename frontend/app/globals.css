@@ -121,6 +121,11 @@
   }
 }
 
+html,
+body {
+  overscroll-behavior: none;
+}
+
 
 *::-webkit-scrollbar {
   width: 0.5rem; /* tương đương w-2 */

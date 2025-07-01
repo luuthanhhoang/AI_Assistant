@@ -1,6 +1,11 @@
 "use client";
 
-import { DatabaseIcon, SearchIcon, SquarePenIcon } from "lucide-react";
+import {
+  DatabaseIcon,
+  GlobeIcon,
+  SearchIcon,
+  SquarePenIcon,
+} from "lucide-react";
 import Logo from "../common/logo";
 import {
   Sidebar,
@@ -16,6 +21,7 @@ import {
 } from "../ui/sidebar";
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { useAppSelector } from "@/store/hooks";
 
 const optionActions = [
   {
@@ -36,15 +42,29 @@ const toolActions = [
     label: "SQL Agent",
     icon: <DatabaseIcon />,
   },
+  {
+    id: "english-agent",
+    label: "English Agent",
+    icon: <GlobeIcon />,
+  },
 ];
 
 export default function SidebarComponent() {
   const router = useRouter();
+  const threads = useAppSelector((state) => state.messages.threads);
+
   const handleClick = useCallback(
     (id: string) => {
       if (id === "new-chat") {
         router.push("/chat");
       }
+    },
+    [router]
+  );
+
+  const handleClickThread = useCallback(
+    (threadId: string) => {
+      router.push(`/chat/${threadId}`);
     },
     [router]
   );
@@ -97,6 +117,22 @@ export default function SidebarComponent() {
         </SidebarGroup>
         <SidebarGroup>
           <SidebarGroupLabel className="text-sm">Đoạn chat</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {threads.map((thread) => (
+                <SidebarMenuItem
+                  key={thread.threadId}
+                  onClick={() => handleClickThread(thread.threadId)}
+                >
+                  <SidebarMenuButton asChild>
+                    <div className="flex items-center gap-2 cursor-pointer">
+                      <span>{thread.title}</span>
+                    </div>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter />
