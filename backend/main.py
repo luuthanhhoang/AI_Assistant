@@ -4,8 +4,16 @@ from routes.chatbot_router import router as chatbot_router
 from database import engine
 from models import messages
 from dotenv import load_dotenv
-
 load_dotenv()
+
+# Kiểm tra kết nối database
+try:
+    messages.Base.metadata.create_all(bind=engine)
+    print("✅ Kết nối database thành công!")
+    print("✅ Tạo bảng database thành công!")
+except Exception as e:
+    print(f"❌ Lỗi kết nối database: {str(e)}")
+    raise e
 
 app = FastAPI(
   title= "API for AI Assistant"
@@ -18,9 +26,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-def init_db():
-  messages.Base.metadata.create_all(bind=engine)
 
 @app.get("/")
 def read_root():
