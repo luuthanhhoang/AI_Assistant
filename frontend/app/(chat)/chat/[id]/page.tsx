@@ -9,7 +9,7 @@ export default function ChatPage() {
   const params = useParams();
   const chatId = params.id as string;
   const messages = useAppSelector(
-    (state) => state.messages.value[chatId] || []
+    (state) => state.messages.messagesValue[chatId]?.messages || []
   );
 
   return (

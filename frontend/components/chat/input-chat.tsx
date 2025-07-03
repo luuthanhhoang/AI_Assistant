@@ -20,10 +20,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import GoogleDriverIcon from "@/public/images/google_driver.png";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useAppDispatch } from "@/store/hooks";
-import { addMessage } from "@/store/features/messagesSlice";
+import { MessageType } from "@/models/message";
+import { createMessage } from "@/store/features/messagesSlice";
 
 const fileActions = [
   {
@@ -63,6 +64,7 @@ export default function InputChat() {
   const params = useParams();
   const [content, setContent] = useState("");
   const dispatch = useAppDispatch();
+  const isSubmittingRef = useRef(false);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -75,25 +77,37 @@ export default function InputChat() {
     setContent("");
   }, []);
 
-  const handleSubmit = useCallback(() => {
-    if (!content) return;
+  const handleSubmit = useCallback(async () => {
+    if (!content.trim() || isSubmittingRef.current) return;
 
-    const pathName = window.location.pathname;
-    const threadId = (params.id as string) || uuidv4();
-    const messageId = uuidv4();
-    dispatch(
-      addMessage({
-        type: "user",
-        content,
-        messageId,
-        threadId,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      })
-    );
-    resetContent();
-    if (pathName !== `/chat/${threadId}`) {
-      router.push(`/chat/${threadId}`);
+    isSubmittingRef.current = true;
+
+    try {
+      const pathName = window.location.pathname;
+      const threadId = (params.id as string) || uuidv4();
+      const messageId = uuidv4();
+
+      const messageContent = content.trim();
+
+      await dispatch(
+        createMessage({
+          type: MessageType.USER,
+          content: messageContent,
+          messageId,
+          threadId,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        })
+      );
+
+      if (pathName !== `/chat/${threadId}`) {
+        router.push(`/chat/${threadId}`);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      resetContent();
+      isSubmittingRef.current = false;
     }
   }, [content, dispatch, params.id, resetContent, router]);
 
@@ -197,7 +211,7 @@ export default function InputChat() {
           </Tooltip>
           <Button
             className="rounded-full w-10 h-10"
-            disabled={!content}
+            disabled={!content.trim() || isSubmittingRef.current}
             onClick={handleSubmit}
           >
             <ArrowUpIcon />

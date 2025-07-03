@@ -51,7 +51,9 @@ const toolActions = [
 
 export default function SidebarComponent() {
   const router = useRouter();
-  const threads = useAppSelector((state) => state.messages.threads);
+  const threads = useAppSelector(
+    (state) => state.messages.threadsValue.threads
+  );
 
   const handleClick = useCallback(
     (id: string) => {

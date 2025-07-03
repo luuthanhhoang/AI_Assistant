@@ -1,5 +1,10 @@
+export enum MessageType {
+  USER = "user",
+  ASSISTANT = "assistant",
+}
+
 interface Message {
-  type: "user" | "assistant";
+  type: MessageType;
   content: string;
   messageId: string;
   threadId: string;
@@ -14,4 +19,20 @@ interface Thread {
   updatedAt: string;
 }
 
-export type { Message, Thread };
+interface ThreadCreate {
+  threadId: string;
+  title: string;
+}
+
+interface ThreadUpdate {
+  title: string;
+}
+
+interface MessageCreate {
+  type: MessageType;
+  messageId: string;
+  content: string;
+  threadId: string;
+}
+
+export type { Message, Thread, ThreadCreate, ThreadUpdate, MessageCreate };

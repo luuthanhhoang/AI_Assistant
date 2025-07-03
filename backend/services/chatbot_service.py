@@ -1,15 +1,15 @@
 from http.client import HTTPException
 from schemas.message import MessageCreate, MessageUpdate, ThreadCreate, ThreadUpdate
 from sqlalchemy.orm import Session
-from datetime import datetime
+from datetime import datetime, timezone
 from models.messages import Message, Thread
 
 def create_thread(db: Session, thread: ThreadCreate):
   db_thread = Thread(
     thread_id=thread.threadId,
     title=thread.title,
-    created_at=datetime.now(datetime.UTC),
-    updated_at=datetime.now(datetime.UTC),
+    created_at=datetime.now(timezone.utc),
+    updated_at=datetime.now(timezone.utc),
   )
   db.add(db_thread)
   db.commit()
@@ -21,7 +21,7 @@ def update_thread(db: Session, thread_id: str, thread: ThreadUpdate):
   if not db_thread:
     raise HTTPException(status_code=404, detail="Thread not found")
   db_thread.title = thread.title
-  db_thread.updated_at = datetime.now(datetime.UTC)
+  db_thread.updated_at = datetime.now(timezone.utc)
   db.commit()
   db.refresh(db_thread)
   return db_thread
@@ -44,13 +44,26 @@ def delete_thread(db: Session, thread_id: str):
   return {"message": "Thread deleted successfully"}
 
 def create_message(db: Session, message: MessageCreate):
+  existing_thread = db.query(Thread).filter(Thread.thread_id == message.threadId).first()
+  if not existing_thread:
+    new_thread = Thread(
+      thread_id=message.threadId,
+      title="New chat",
+      created_at=datetime.now(timezone.utc),
+      updated_at=datetime.now(timezone.utc),
+    )
+    db.add(new_thread)
+    db.commit()
+    db.refresh(new_thread)
+  
+  # Tạo message như bình thường
   db_message = Message(
     message_id=message.messageId,
     thread_id=message.threadId,
     type=message.type,
     content=message.content,
-    created_at=datetime.now(datetime.UTC),
-    updated_at=datetime.now(datetime.UTC),
+    created_at=datetime.now(timezone.utc),
+    updated_at=datetime.now(timezone.utc),
   )
   db.add(db_message)
   db.commit()
@@ -62,7 +75,7 @@ def update_message(db: Session, message_id: str, message: MessageUpdate):
   if not db_message:
     raise HTTPException(status_code=404, detail="Message not found")
   db_message.content = message.content
-  db_message.updated_at = datetime.now(datetime.UTC)
+  db_message.updated_at = datetime.now(timezone.utc)
   db.commit()
   db.refresh(db_message)
   return db_message
