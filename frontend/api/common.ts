@@ -96,14 +96,14 @@ export async function apiPost<R, D>(
   return postPromise;
 }
 
-export async function apiPut<R, D>(
+export async function apiPatch<R, D>(
   url: string,
   data: D,
   converterR?: (data: any) => R,
   converterD?: (data: any) => D
 ): Promise<Response<R>> {
-  const putPromise = axios
-    .put(url, converterD ? converterD(data) : data, configWithBearer)
+  const patchPromise = axios
+    .patch(url, converterD ? converterD(data) : data, configWithBearer)
     .then((response) => {
       if (response.status === 200) {
         return {
@@ -128,7 +128,7 @@ export async function apiPut<R, D>(
         errorMessage: error.message,
       };
     });
-  return putPromise;
+  return patchPromise;
 }
 
 export async function apiDelete<R>(
