@@ -40,7 +40,7 @@ def get_threads(skip: int = 0, limit: int = 20, db: Session = Depends(get_db)):
     for thread in threads
   ]
 
-@router.put("/thread/{thread_id}", response_model=ThreadOut)
+@router.patch("/thread/{thread_id}", response_model=ThreadOut)
 def update_thread(thread_id: str, thread: ThreadUpdate, db: Session = Depends(get_db)):
   thread = chatbot_service.update_thread(db, thread_id, thread)
   return ThreadOut(
@@ -52,7 +52,8 @@ def update_thread(thread_id: str, thread: ThreadUpdate, db: Session = Depends(ge
 
 @router.delete("/thread/{thread_id}", response_model=ThreadDelete)
 def delete_thread(thread_id: str, db: Session = Depends(get_db)):
-  return chatbot_service.delete_thread(db, thread_id)
+  thread_id = chatbot_service.delete_thread(db, thread_id)
+  return ThreadDelete(threadId=thread_id)
 
 @router.post("/message", response_model=MessageOut)
 def create_message(message: MessageCreate, db: Session = Depends(get_db)):

@@ -41,7 +41,7 @@ def delete_thread(db: Session, thread_id: str):
     raise HTTPException(status_code=404, detail="Thread not found")
   db.delete(db_thread)
   db.commit()
-  return {"message": "Thread deleted successfully"}
+  return thread_id
 
 def create_message(db: Session, message: MessageCreate):
   existing_thread = db.query(Thread).filter(Thread.thread_id == message.threadId).first()
@@ -56,7 +56,6 @@ def create_message(db: Session, message: MessageCreate):
     db.commit()
     db.refresh(new_thread)
   
-  # Tạo message như bình thường
   db_message = Message(
     message_id=message.messageId,
     thread_id=message.threadId,

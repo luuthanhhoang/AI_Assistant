@@ -16,7 +16,6 @@ class ThreadCreate(ThreadBase):
 
 class ThreadUpdate(BaseModel):
   title: Optional[str]
-  updatedAt: datetime
   
 class ThreadDelete(BaseModel):
   threadId: str
