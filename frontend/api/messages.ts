@@ -1,5 +1,5 @@
 import { Message, MessageCreate, Thread, ThreadCreate } from "@/models/message";
-import { apiDelete, apiGet, apiPost, apiPut, Response } from "./common";
+import { apiDelete, apiGet, apiPatch, apiPost, Response } from "./common";
 
 export async function getThreadsApi(
   skip: number,
@@ -18,8 +18,11 @@ export const createThreadApi = async (thread: ThreadCreate) => {
   return apiPost("/chatbot/thread", thread);
 };
 
-export const updateThreadApi = async (threadId: string, title: string) => {
-  return apiPut(`/chatbot/thread/${threadId}`, { title });
+export const updateThreadApi = async (
+  threadId: string,
+  title: string
+): Promise<Response<Thread>> => {
+  return apiPatch(`/chatbot/thread/${threadId}`, { title });
 };
 
 export const deleteThreadApi = async (threadId: string) => {
@@ -33,7 +36,7 @@ export function createMessageApi(
 }
 
 export const updateMessageApi = async (messageId: string, content: string) => {
-  return apiPut(`/chatbot/message/${messageId}`, { content });
+  return apiPatch(`/chatbot/message/${messageId}`, { content });
 };
 
 export const getMessageApi = async (messageId: string) => {

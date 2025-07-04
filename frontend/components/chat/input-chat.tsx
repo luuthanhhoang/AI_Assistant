@@ -24,7 +24,7 @@ import { useCallback, useState, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useAppDispatch } from "@/store/hooks";
 import { MessageType } from "@/models/message";
-import { createMessage } from "@/store/features/messagesSlice";
+import { createMessage } from "@/store/features/messages/messagesService";
 
 const fileActions = [
   {
