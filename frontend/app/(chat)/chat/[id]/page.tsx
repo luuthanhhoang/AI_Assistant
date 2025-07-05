@@ -4,13 +4,19 @@ import InputChat from "@/components/chat/input-chat";
 import MessageBox from "@/components/chat/message-box";
 import { useAppSelector } from "@/store/hooks";
 import { useParams } from "next/navigation";
+import { useEffect, useRef } from "react";
 
 export default function ChatPage() {
   const params = useParams();
   const chatId = params.id as string;
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const messages = useAppSelector(
     (state) => state.messages.messagesValue[chatId]?.messages || []
   );
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   return (
     <div className="flex justify-center flex-1 p-4 w-full h-full">
@@ -23,6 +29,7 @@ export default function ChatPage() {
               type={message.type}
             />
           ))}
+          <div ref={messagesEndRef} />
         </div>
 
         <div className="w-full lg:w-3xl sticky bottom-0">

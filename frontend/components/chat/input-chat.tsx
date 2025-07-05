@@ -124,6 +124,7 @@ export default function InputChat() {
   return (
     <div className="flex flex-col items-center w-full gap-2 p-2 rounded-3xl border bg-white dark:bg-[#303030]">
       <Textarea
+        autoFocus
         placeholder="Hỏi bất cứ điều gì"
         className="block min-h-8 max-h-40 w-full resize-none border-0 !bg-transparent shadow-none pl-3 pr-0 py-2 ring-0 !text-[16px] focus:ring-0 focus-visible:ring-0 focus-visible:border-0 focus-visible:outline-none scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800"
         value={content}

@@ -82,6 +82,7 @@ const actionThread = [
 export default function SidebarComponent() {
   const router = useRouter();
   const dispatch = useAppDispatch();
+
   const [threadTitle, setThreadTitle] = useState("");
   const [threadId, setThreadId] = useState("");
 
@@ -138,6 +139,12 @@ export default function SidebarComponent() {
     router.push("/chat");
   }, [threadId, dispatch, router]);
 
+  const handleClickOutInput = useCallback(() => {
+    setIsUpdateThread(false);
+    setThreadTitle("");
+    setThreadId("");
+  }, []);
+
   return (
     <Sidebar>
       <SidebarHeader className="h-16 p-4">
@@ -193,9 +200,11 @@ export default function SidebarComponent() {
                   <div key={threadId}>
                     <Input
                       key={threadId}
+                      autoFocus
                       value={threadTitle}
                       onChange={(e) => setThreadTitle(e.target.value)}
                       onKeyDown={handleUpdateThread}
+                      onBlur={handleClickOutInput}
                     />
                   </div>
                 ) : (
