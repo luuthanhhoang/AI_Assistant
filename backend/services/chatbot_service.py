@@ -33,7 +33,7 @@ def get_thread(db: Session, thread_id: str):
   return db_thread
 
 def get_threads(db: Session, skip: int = 0, limit: int = 20):
-  return db.query(Thread).offset(skip).limit(limit).all()
+  return db.query(Thread).order_by(Thread.created_at.desc()).offset(skip).limit(limit).all()
 
 def delete_thread(db: Session, thread_id: str):
   db_thread = db.query(Thread).filter(Thread.thread_id == thread_id).first()
