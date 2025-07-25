@@ -158,9 +158,10 @@ const messagesSlice = createSlice({
       if (
         !state.threadsValue.threads.find((t) => t.threadId === message.threadId)
       ) {
+        console.log(message);
         state.threadsValue.threads.push({
           threadId: message.threadId,
-          title: "New chat",
+          title: message.content,
           createdAt: message.createdAt,
           updatedAt: message.updatedAt,
         });
